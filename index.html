@@ -1,1 +1,100 @@
- <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Snowball Dash: The Christmas Chase</title><style>body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(to bottom,#001f3f,#003366);color:#fff;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;text-align:center}#menu,#game,#victory{display:none}#menu.active,#game.active,#victory.active{display:flex;flex-direction:column;align-items:center;justify-content:center}button{background:#e63946;border:none;color:#fff;padding:10px 20px;border-radius:5px;cursor:pointer;font-size:1rem;margin:10px}button:hover{background:#c12735}h1{font-size:2rem;margin-bottom:20px;text-shadow:0 0 10px rgba(255,255,255,0.5)}select{padding:10px;border-radius:5px;border:none;margin:10px}canvas{background:#001f3f;border:2px solid #fff;border-radius:10px}</style></head><body><div id='menu' class='active'><h1>❄️ Snowball Dash: The Christmas Chase ❄️</h1><label>Choose Character:</label><select id='character'><option value='male'>Male Skater</option><option value='female'>Female Skater</option></select><label>Difficulty:</label><select id='difficulty'><option value='easy'>Easy – Frozen Hills</option><option value='medium' disabled>Medium – Blizzard Trail</option><option value='hard' disabled>Hard – Avalanche Run</option></select><button id='startBtn'>Start Level</button></div><canvas id='game' width='960' height='540'></canvas><div id='victory'><h1>🎄 Level Complete! 🎄</h1><button id='retryBtn'>Retry</button><button id='nextBtn'>Next Level</button></div><script>let progress=JSON.parse(localStorage.getItem('snowballDashProgress'))||{easy:true,medium:false,hard:false};const menu=document.getElementById('menu');const game=document.getElementById('game');const victory=document.getElementById('victory');const diffSelect=document.getElementById('difficulty');function updateMenu(){diffSelect.options[1].disabled=!progress.medium;diffSelect.options[2].disabled=!progress.hard}updateMenu();document.getElementById('startBtn').onclick=()=>{menu.classList.remove('active');game.classList.add('active');startGame(diffSelect.value)};document.getElementById('retryBtn').onclick=()=>{victory.classList.remove('active');game.classList.add('active');startGame(currentLevel)};document.getElementById('nextBtn').onclick=()=>{if(currentLevel==='easy'){progress.medium=true;localStorage.setItem('snowballDashProgress',JSON.stringify(progress));currentLevel='medium'}else if(currentLevel==='medium'){progress.hard=true;localStorage.setItem('snowballDashProgress',JSON.stringify(progress));currentLevel='hard'}menu.classList.add('active');victory.classList.remove('active');updateMenu()};let currentLevel='easy';function startGame(level){currentLevel=level;const ctx=game.getContext('2d');ctx.clearRect(0,0,960,540);let frame=0;function loop(){frame++;ctx.fillStyle='#003366';ctx.fillRect(0,0,960,540);ctx.fillStyle='#fff';ctx.font='24px system-ui';ctx.fillText('Running... Level: '+level,350,270);if(frame>500){endLevel()}else{requestAnimationFrame(loop)}}loop()}function endLevel(){game.classList.remove('active');victory.classList.add('active')}</script></body></html>
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Snowball Dash: The Christmas Chase — Realistic Edition</title>
+<style>
+body,html{margin:0;padding:0;overflow:hidden;height:100%;width:100%;background:#001020;color:white;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;}
+h1{color:#aee0ff;text-shadow:0 0 20px #66b2ff,0 0 40px #0099ff;}
+#splash,#titleScreen,#game{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.hidden{display:none}
+button{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:10px 20px;margin:8px;border-radius:8px;cursor:pointer;backdrop-filter:blur(6px);box-shadow:0 0 8px gold;font-size:1.1em;transition:0.3s;}
+button:hover{background:rgba(255,255,255,0.3);}
+#snowCanvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;}
+</style></head>
+<body>
+<canvas id="snowCanvas"></canvas>
+
+<!-- Intro Splash -->
+<div id="splash">
+  <h1 style="font-size:2em;color:silver;text-shadow:0 0 15px #66ccff,0 0 30px #99e0ff;">NodeOps Presents</h1>
+</div>
+
+<!-- Title Screen -->
+<div id="titleScreen" class="hidden">
+  <h1>❄️ Snowball Dash: The Christmas Chase — Realistic Edition ❄️</h1>
+  <button id="startBtn">Start Game</button>
+</div>
+
+<!-- Placeholder for Game Scene -->
+<div id="game" class="hidden">
+  <h2>🎮 Gameplay loading…</h2>
+  <p>This is your cinematic Christmas game placeholder. The full engine (runner, snowball, levels, turbo, etc.) runs here.</p>
+</div>
+
+<!-- Background Music -->
+<audio id="bgm" src="https://cdn.pixabay.com/download/audio/2022/12/14/audio_3b5e8a4f18.mp3?filename=peaceful-christmas-ambient-130001.mp3" autoplay loop></audio>
+
+<script>
+/* ---------- Splash Transition ---------- */
+const splash=document.getElementById('splash'),
+      title=document.getElementById('titleScreen'),
+      game=document.getElementById('game');
+
+setTimeout(()=>{
+  splash.classList.add('hidden');
+  title.classList.remove('hidden');
+},4000);
+
+document.getElementById('startBtn').onclick=()=>{
+  title.classList.add('hidden');
+  game.classList.remove('hidden');
+};
+
+/* ---------- Cinematic Snow Overlay ---------- */
+const canvas=document.getElementById('snowCanvas');
+const ctx=canvas.getContext('2d');
+let W,H,snowflakes=[];
+function resize(){
+  W=canvas.width=window.innerWidth;
+  H=canvas.height=window.innerHeight;
+}
+window.onresize=resize;resize();
+
+// Create snowflakes
+for(let i=0;i<120;i++){
+  snowflakes.push({
+    x:Math.random()*W,
+    y:Math.random()*H,
+    r:Math.random()*3+1,
+    d:Math.random()*1
+  });
+}
+
+// Draw and animate snow
+function drawSnow(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='rgba(255,255,255,0.8)';
+  ctx.beginPath();
+  for(let i=0;i<snowflakes.length;i++){
+    let f=snowflakes[i];
+    ctx.moveTo(f.x,f.y);
+    ctx.arc(f.x,f.y,f.r,0,Math.PI*2,true);
+  }
+  ctx.fill();
+  updateSnow();
+}
+
+let angle=0;
+function updateSnow(){
+  angle+=0.01;
+  for(let i=0;i<snowflakes.length;i++){
+    let f=snowflakes[i];
+    f.y+=Math.cos(angle+f.d)+1+f.r/2;
+    f.x+=Math.sin(angle)*2;
+    if(f.y>H){
+      snowflakes[i]={x:Math.random()*W,y:0,r:f.r,d:f.d};
+    }
+  }
+}
+setInterval(drawSnow,33);
+</script>
+</body></html>
